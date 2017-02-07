@@ -16,8 +16,6 @@ var (
 type (
 	Account struct {
 		ID        string       `json:"id,omitempty" gorethink:"id,omitempty"`
-		FirstName string       `json:"first_name,omitempty" gorethink:"first_name,omitempty"`
-		LastName  string       `json:"last_name,omitempty" gorethink:"last_name,omitempty"`
 		Username  string       `json:"username,omitempty" gorethink:"username"`
 		Password  string       `json:"password,omitempty" gorethink:"password"`
 		Tokens    []*AuthToken `json:"-" gorethink:"tokens"`

@@ -147,5 +147,34 @@ func DefaultACLs() []*ACL {
 	}
 	acls = append(acls, registriesACLRW)
 
+	apiACLRO := &ACL{
+		RoleName: "api:ro",
+		Description: "All Api Read Only",
+		Rules: []*AccessRule{
+			{
+				Path:    "/containers",
+				Methods: []string{"GET"},
+			},
+
+			{
+				Path:    "/api/events",
+				Methods: []string{"GET"},
+			},
+			{
+				Path:    "/images",
+				Methods: []string{"GET"},
+			},
+			{
+				Path:    "/api/nodes",
+				Methods: []string{"GET"},
+			},
+			{
+				Path:    "/api/registry",
+				Methods: []string{"GET"},
+			},
+		},
+	}
+	acls = append(acls, apiACLRO)
+
 	return acls
 }

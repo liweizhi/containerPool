@@ -3,51 +3,37 @@ package main
 import (
 	"io"
 	"net/http"
-	"os"
-	"github.com/urfave/cli"
+	"encoding/json"
 	"fmt"
-
 )
 
 type MyHandle struct{}
 
+type Account struct{
+	User string	`json:"u"`
+	Psw string	`json:"p"`
+
+}
 func main() {
-	var language string
+	var a *Account
 
-	app := cli.NewApp()
 
-	app.Flags = []cli.Flag {
-		cli.StringFlag{
-			Name:        "lang",
-			Value:       "english",
-			Usage:       "language for the greeting",
-			Destination: &language,
-		},
+	s := `{"u":"lwz","p":"123"}`
+	json.Unmarshal([]byte(s), &a)
+
+	fmt.Printf("%+v",a)
+	var jsonBlob = [ ] byte ( `
+        { "Name" : "Platypus" , "Order" : "Monotremata" } ` )
+	type Animal struct {
+		Name  string
+		Order string
 	}
-
-	fmt.Println(language)
-	app.Before = func(c *cli.Context) error {
-		fmt.Println("before")
-		if c.GlobalBool("lang") {
-			fmt.Println("lang")
-		}
-		return nil
+	var animal  *Animal
+	err := json. Unmarshal ( jsonBlob , & animal )
+	if err != nil {
+		fmt. Println ( "error:" , err )
 	}
-	app.Action = func(c *cli.Context) error {
-		name := "someone"
-		if c.NArg() > 0 {
-			name = c.Args()[0]
-		}
-		fmt.Println(language)
-		if language == "spanish" {
-			fmt.Println("Hola", name)
-		} else {
-			fmt.Println("Hello", name)
-		}
-		return nil
-	}
-
-	app.Run(os.Args)
+	fmt. Printf ( "%+v" , animal )
 }
 
 func (*MyHandle) ServeHTTP(w http.ResponseWriter, r *http.Request) {

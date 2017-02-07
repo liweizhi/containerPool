@@ -38,7 +38,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "rethinkdb-addr",
 					Usage: "RethinkDB address",
-					Value: "rethinkdb:28015",
+					Value: "localhost:28015",
 				},
 				cli.StringFlag{
 					Name:  "rethinkdb-auth-key",
@@ -62,6 +62,11 @@ func main() {
 					Name:  "auth-whitelist-cidr",
 					Usage: "whitelist CIDR to bypass auth",
 					Value: &cli.StringSlice{},
+				},
+
+				cli.BoolFlag{
+					Name: "cors",
+					Usage: "enable Cross-Origin Resource Sharing",
 				},
 			},
 

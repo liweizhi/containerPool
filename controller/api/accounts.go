@@ -6,10 +6,10 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/shipyard/shipyard/auth"
+	"github.com/liweizhi/containerPool/auth"
 )
 
-func (a *Api) accounts(w http.ResponseWriter, r *http.Request) {
+func (a *API) accounts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 
 	accounts, err := a.manager.Accounts()
@@ -23,7 +23,7 @@ func (a *Api) accounts(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *Api) saveAccount(w http.ResponseWriter, r *http.Request) {
+func (a *API) saveAccount(w http.ResponseWriter, r *http.Request) {
 	var account *auth.Account
 	if err := json.NewDecoder(r.Body).Decode(&account); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -38,9 +38,10 @@ func (a *Api) saveAccount(w http.ResponseWriter, r *http.Request) {
 
 	log.Debugf("updated account: name=%s", account.Username)
 	w.WriteHeader(http.StatusNoContent)
+
 }
 
-func (a *Api) account(w http.ResponseWriter, r *http.Request) {
+func (a *API) account(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 
@@ -56,7 +57,7 @@ func (a *Api) account(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-func (a *Api) deleteAccount(w http.ResponseWriter, r *http.Request) {
+func (a *API) deleteAccount(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 

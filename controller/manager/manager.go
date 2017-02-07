@@ -11,6 +11,7 @@ import (
 
 	log"github.com/Sirupsen/logrus"
 
+	"fmt"
 )
 const (
 	tblNameConfig      = "config"
@@ -23,9 +24,6 @@ const (
 	tblNameRegistries  = "registries"
 	tblNameConsole     = "console"
 	storeKey           = "thucloud"
-	trackerHost        = "http://tracker.shipyard-project.com"
-	NodeHealthUp       = "up"
-	NodeHealthDown     = "down"
 )
 
 var (
@@ -65,9 +63,20 @@ type Manager interface {
 	SaveAccount(account *auth.Account) error
 	DeleteAccount(account *auth.Account) error
 
-	//NewAuthToken(username string, userAgent string) (*auth.AuthToken, error)
-	//Authenticate(username, password string) (bool, error)
-	//GetAuthenticator() auth.Authenticator
+	Authenticate(username, password string) (bool, error)
+	GetAuthenticator() auth.Authenticator
+
+	NewAuthToken(username string, userAgent string) (*auth.AuthToken, error)
+	VerifyAuthToken(username, token string) error
+
+	VerifyServiceKey(key string) error
+	SaveServiceKey(key *auth.ServiceKey) error
+	RemoveServiceKey(key string) error
+	ServiceKey(key string) (*auth.ServiceKey, error)
+	ServiceKeys() ([]*auth.ServiceKey, error)
+	NewServiceKey(description string) (*auth.ServiceKey, error)
+
+	ChangePassword(username, password string) error
 
 }
 
@@ -160,8 +169,6 @@ func (m DefaultManager) SaveAccount(account *auth.Account) error {
 	// update
 	if acct != nil {
 		updates := map[string]interface{}{
-			"first_name": account.FirstName,
-			"last_name":  account.LastName,
 			"roles":      account.Roles,
 		}
 		if account.Password != "" {
@@ -227,4 +234,149 @@ func (m DefaultManager) Authenticate(username, password string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+
+func (m DefaultManager) VerifyAuthToken(username, token string) error {
+	acct, err := m.Account(username)
+	if err != nil {
+		return err
+	}
+	found := false
+	for _, t := range acct.Tokens {
+		if token == t.Token {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return ErrInvalidAuthToken
+	}
+	return nil
+}
+
+func (m DefaultManager) NewAuthToken(username string, userAgent string) (*auth.AuthToken, error) {
+	tk, err := m.authenticator.GenerateToken()
+	if err != nil {
+		return nil, err
+	}
+	acct, err := m.Account(username)
+	if err != nil {
+		return nil, err
+	}
+	token := &auth.AuthToken{}
+	tokens := acct.Tokens
+	found := false
+	for _, t := range tokens {
+		if t.UserAgent == userAgent {
+			found = true
+			t.Token = tk
+			token = t
+			break
+		}
+	}
+	if !found {
+		token = &auth.AuthToken{
+			UserAgent: userAgent,
+			Token:     tk,
+		}
+		tokens = append(tokens, token)
+	}
+	// delete token
+
+	if _, err := r.Table(tblNameAccounts).Filter(map[string]string{"username": username}).Filter(r.Row.Field("user_agent").Eq(userAgent)).Delete().Run(m.session); err != nil {
+		return nil, err
+	}
+	// add
+	if _, err := r.Table(tblNameAccounts).Filter(map[string]string{"username": username}).Update(map[string]interface{}{"tokens": tokens}).RunWrite(m.session); err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func (m DefaultManager) VerifyServiceKey(key string) error {
+	if _, err := m.ServiceKey(key); err != nil {
+		return err
+	}
+	return nil
+}
+func (m DefaultManager) ServiceKeys() ([]*auth.ServiceKey, error) {
+	res, err := r.Table(tblNameServiceKeys).Run(m.session)
+	if err != nil {
+		return nil, err
+	}
+	keys := []*auth.ServiceKey{}
+	if err := res.All(&keys); err != nil {
+		return nil, err
+	}
+	return keys, nil
+}
+
+func (m DefaultManager) ServiceKey(key string) (*auth.ServiceKey, error) {
+	res, err := r.Table(tblNameServiceKeys).Filter(map[string]string{"key": key}).Run(m.session)
+	if err != nil {
+		return nil, err
+
+	}
+	if res.IsNil() {
+		return nil, ErrServiceKeyDoesNotExist
+	}
+	var k *auth.ServiceKey
+	if err := res.One(&k); err != nil {
+		return nil, err
+	}
+	return k, nil
+}
+func (m DefaultManager) NewServiceKey(description string) (*auth.ServiceKey, error) {
+	k, err := m.authenticator.GenerateToken()
+	if err != nil {
+		return nil, err
+	}
+	key := &auth.ServiceKey{
+		Key:         k[24:],
+		Description: description,
+	}
+	if err := m.SaveServiceKey(key); err != nil {
+		return nil, err
+	}
+	return key, nil
+}
+func (m DefaultManager) SaveServiceKey(key *auth.ServiceKey) error {
+	if _, err := r.Table(tblNameServiceKeys).Insert(key).RunWrite(m.session); err != nil {
+		return err
+	}
+
+	//m.logEvent("add-service-key", fmt.Sprintf("description=%s", key.Description), []string{"security"})
+
+	return nil
+}
+
+func (m DefaultManager) RemoveServiceKey(key string) error {
+	if _, err := r.Table(tblNameServiceKeys).Filter(map[string]string{"key": key}).Delete().RunWrite(m.session); err != nil {
+		return err
+	}
+
+	//m.logEvent("delete-service-key", fmt.Sprintf("key=%s", key), []string{"security"})
+
+	return nil
+}
+
+
+func (m DefaultManager) ChangePassword(username, password string) error {
+	if !m.authenticator.IsUpdateSupported() {
+		return fmt.Errorf("not supported for authenticator: %s", m.authenticator.Name())
+	}
+
+	hash, err := auth.Hash(password)
+	if err != nil {
+		return err
+	}
+
+	if _, err := r.Table(tblNameAccounts).Filter(map[string]string{"username": username}).Update(map[string]string{"password": hash}).Run(m.session); err != nil {
+		return err
+	}
+
+	//m.logEvent("change-password", username, []string{"security"})
+
+	return nil
 }
