@@ -32,6 +32,8 @@ func (a *AuthRequired)handleRequest(w http.ResponseWriter, r *http.Request) erro
 			valid = true
 		}
 	} else { // check for authHeader
+
+
 		authHeader := r.Header.Get("X-Access-Token")
 		parts := strings.Split(authHeader, ":")
 		if len(parts) == 2 {

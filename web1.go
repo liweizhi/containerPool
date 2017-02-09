@@ -3,8 +3,9 @@ package main
 import (
 	"io"
 	"net/http"
-	"encoding/json"
-	"fmt"
+	//"encoding/json"
+	//"fmt"
+	"log"
 )
 
 type MyHandle struct{}
@@ -14,28 +15,21 @@ type Account struct{
 	Psw string	`json:"p"`
 
 }
+func redirect(w http.ResponseWriter, r *http.Request) {
+
+	http.Redirect(w, r, "www.sina.com", 301)
+}
+
 func main() {
-	var a *Account
 
-
-	s := `{"u":"lwz","p":"123"}`
-	json.Unmarshal([]byte(s), &a)
-
-	fmt.Printf("%+v",a)
-	var jsonBlob = [ ] byte ( `
-        { "Name" : "Platypus" , "Order" : "Monotremata" } ` )
-	type Animal struct {
-		Name  string
-		Order string
-	}
-	var animal  *Animal
-	err := json. Unmarshal ( jsonBlob , & animal )
+	http.HandleFunc("/", redirect)
+	err := http.ListenAndServe(":9010", nil)
 	if err != nil {
-		fmt. Println ( "error:" , err )
+		log.Fatal("ListenAndServe: ", err)
 	}
-	fmt. Printf ( "%+v" , animal )
 }
 
 func (*MyHandle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "URL"+r.URL.String())
+
 }

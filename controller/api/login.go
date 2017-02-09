@@ -5,11 +5,13 @@ import (
 	"net/http"
 
 	log "github.com/Sirupsen/logrus"
-	"strings"
+
+
 
 )
 
 func (a *API) login(w http.ResponseWriter, r *http.Request) {
+	log.Debugln(r.Method, r.URL)
 	var creds *Credentials
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -17,15 +19,16 @@ func (a *API) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loginSuccessful, err := a.manager.Authenticate(creds.Username, creds.Password)
-	if err != nil {
-		log.Errorf("error during login for %s from %s: %s", creds.Username, r.RemoteAddr, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+
 
 	if !loginSuccessful {
 		log.Warnf("invalid login for %s from %s", creds.Username, r.RemoteAddr)
 		http.Error(w, "invalid username/password", http.StatusForbidden)
+		return
+	}
+	if err != nil {
+		log.Errorf("error during login for %s from %s: %s", creds.Username, r.RemoteAddr, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -39,21 +42,28 @@ func (a *API) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	session, _ := a.manager.Store().Get(r, a.manager.StoreKey())
+	session.Values["username"] = creds.Username
+	session.Save(r, w)
 
 	if err := json.NewEncoder(w).Encode(token); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+
+
 }
 
 func (a *API) changePassword(w http.ResponseWriter, r *http.Request) {
 
 	var creds *Credentials
 	var username string
-	authHeader := r.Header.Get("X-Access-Token")
-	parts := strings.Split(authHeader, ":")
-	if len(parts) == 2 {
-		username = parts[0]
+
+	seesion, _ := a.manager.Store().Get(r, a.manager.StoreKey())
+	username = seesion.Values["username"].(string)
+	if username == "" {
+		http.Error(w, "unauthroized", http.StatusUnauthorized)
 	}
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

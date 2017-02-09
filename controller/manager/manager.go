@@ -12,6 +12,7 @@ import (
 	log"github.com/Sirupsen/logrus"
 
 	"fmt"
+	"github.com/gorilla/securecookie"
 )
 const (
 	tblNameConfig      = "config"
@@ -39,7 +40,6 @@ var (
 	ErrWebhookKeyDoesNotExist     = errors.New("webhook key does not exist")
 	ErrRegistryDoesNotExist       = errors.New("registry does not exist")
 	ErrConsoleSessionDoesNotExist = errors.New("console session does not exist")
-	store                         = sessions.NewCookieStore([]byte(storeKey))
 )
 type DefaultManager struct {
 	storeKey         string
@@ -78,6 +78,11 @@ type Manager interface {
 
 	ChangePassword(username, password string) error
 
+	Store() *sessions.CookieStore
+	StoreKey() string
+
+
+
 }
 
 func NewManager(addr string, database string, authKey string, client *dockerclient.DockerClient,  authenticator auth.Authenticator) (Manager, error) {
@@ -93,6 +98,8 @@ func NewManager(addr string, database string, authKey string, client *dockerclie
 	log.Info("checking database")
 
 	r.DBCreate(database).Run(session)
+	store := sessions.NewCookieStore(securecookie.GenerateRandomKey(32))
+
 	m := &DefaultManager{
 		database:         database,
 		authKey:          authKey,
@@ -102,6 +109,7 @@ func NewManager(addr string, database string, authKey string, client *dockerclie
 		client:           client,
 		storeKey:         storeKey,
 	}
+
 	m.initdb()
 	return m, nil
 }
@@ -379,4 +387,12 @@ func (m DefaultManager) ChangePassword(username, password string) error {
 	//m.logEvent("change-password", username, []string{"security"})
 
 	return nil
+}
+
+func (m DefaultManager) Store() *sessions.CookieStore{
+	return m.store
+}
+
+func (m DefaultManager) StoreKey() string{
+	return storeKey
 }
