@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/urfave/cli"
 	"github.com/samalba/dockerclient"
-	"fmt"
+
 
 	"github.com/liweizhi/containerPool/controller/manager"
 	"github.com/liweizhi/containerPool/auth"
@@ -12,7 +12,7 @@ import (
 	log"github.com/Sirupsen/logrus"
 )
 func Server(c *cli.Context) {
-	fmt.Println("hello world")
+
 
 	listenAddr := c.String("listen")
 	rethinkdbAddr := c.String("rethinkdb-addr")

@@ -81,6 +81,8 @@ type Manager interface {
 	Store() *sessions.CookieStore
 	StoreKey() string
 
+	Roles()  []*auth.ACL
+	Role(name string)  *auth.ACL
 
 
 }
@@ -395,4 +397,20 @@ func (m DefaultManager) Store() *sessions.CookieStore{
 
 func (m DefaultManager) StoreKey() string{
 	return storeKey
+}
+
+func (m DefaultManager) Roles() []*auth.ACL{
+	return auth.DefaultACLs()
+}
+
+func (m DefaultManager) Role(name string) *auth.ACL{
+	//var acl *auth.ACL
+	acls := auth.DefaultACLs()
+	for _, acl := range acls{
+		if acl.RoleName == name{
+			return acl
+		}
+	}
+
+	return nil
 }

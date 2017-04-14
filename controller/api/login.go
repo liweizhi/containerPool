@@ -5,9 +5,6 @@ import (
 	"net/http"
 
 	log "github.com/Sirupsen/logrus"
-
-
-
 )
 
 func (a *API) login(w http.ResponseWriter, r *http.Request) {

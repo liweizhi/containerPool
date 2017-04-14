@@ -5,7 +5,8 @@ import (
 	"net/http"
 	//"encoding/json"
 	//"fmt"
-	"log"
+
+	"fmt"
 )
 
 type MyHandle struct{}
@@ -21,12 +22,9 @@ func redirect(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
-	http.HandleFunc("/", redirect)
-	err := http.ListenAndServe(":9010", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	s:= "haha"
+	a := string("haha")
+	fmt.Println(s == a)
 }
 
 func (*MyHandle) ServeHTTP(w http.ResponseWriter, r *http.Request) {

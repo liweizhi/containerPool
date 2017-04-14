@@ -10,6 +10,7 @@ import (
 )
 
 func (a *API) accounts(w http.ResponseWriter, r *http.Request) {
+	log.Debugln(r.Method, r.URL)
 	w.Header().Set("content-type", "application/json")
 
 	accounts, err := a.manager.Accounts()
@@ -24,6 +25,7 @@ func (a *API) accounts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) saveAccount(w http.ResponseWriter, r *http.Request) {
+	log.Debugln(r.Method, r.URL)
 	var account *auth.Account
 	if err := json.NewDecoder(r.Body).Decode(&account); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -42,6 +44,7 @@ func (a *API) saveAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) account(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
 	vars := mux.Vars(r)
 	username := vars["username"]
 

@@ -51,6 +51,8 @@ func(a *API) Start(){
 	apiRouter.HandleFunc("/api/accounts", a.accounts).Methods("GET")
 	apiRouter.HandleFunc("/api/accounts/{username}", a.account).Methods("GET")
 	apiRouter.HandleFunc("/api/accounts/{username}", a.deleteAccount).Methods("DELETE")
+	apiRouter.HandleFunc("/api/roles", a.roles).Methods("GET")
+	apiRouter.HandleFunc("/api/roles/{name}", a.role).Methods("GET")
 
 
 	authRequired := middleware.NewAuthRequired(a.manager)
@@ -91,6 +93,10 @@ func(a *API) Start(){
 			"/swarm":				a.dockerHandler,
 			"/nodes":				a.dockerHandler,
 			"/nodes/{id}":				a.dockerHandler,
+			"/info":				a.dockerHandler,
+			"/events":				a.dockerHandler,
+			"/version":				a.dockerHandler,
+			"/_ping":				a.dockerHandler,
 
 		},
 
@@ -105,12 +111,12 @@ func(a *API) Start(){
 			"/containers/{id}/pause":		a.dockerHandler,
 			"/build":				a.dockerHandler, //Build an image
 			"/images/create":			a.dockerHandler, //Create an image by either pulling it from a registry or importing it.
-
 			"/images/{name}/push":			a.dockerHandler,
 			"/commit":				a.dockerHandler, //Create a new image from a container
 			"/images/load":				a.dockerHandler, //Load a set of images and tags into a repository.
 			"/swarm/init":				a.dockerHandler,
 			"/swarm/join":				a.dockerHandler,
+			"/auth":				a.dockerHandler,
 
 
 
@@ -140,6 +146,12 @@ func(a *API) Start(){
 	mainMux.Handle("/networks/", dockerMiddlewareStack)
 	mainMux.Handle("/nodes", dockerMiddlewareStack)
 	mainMux.Handle("/build", dockerMiddlewareStack)
+	mainMux.Handle("/_ping", dockerMiddlewareStack)
+	mainMux.Handle("/version", dockerMiddlewareStack)
+	mainMux.Handle("/info", dockerMiddlewareStack)
+	mainMux.Handle("/auth", dockerMiddlewareStack)
+
+
 
 
 

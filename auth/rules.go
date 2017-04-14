@@ -165,7 +165,7 @@ func DefaultACLs() []*ACL {
 				Methods: []string{"GET"},
 			},
 			{
-				Path:    "/api/nodes",
+				Path:    "/nodes",
 				Methods: []string{"GET"},
 			},
 			{

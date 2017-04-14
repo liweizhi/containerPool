@@ -8,7 +8,7 @@ import (
 )
 
 func(a* API) dockerHandler(w http.ResponseWriter, r *http.Request){
-	log.Infoln(r.Method, r.URL)
+	log.Debugln(r.Method, r.URL)
 	var err error
 	r.URL, err = url.ParseRequestURI(a.dockerUrl)
 	r.URL.Scheme = "http"
