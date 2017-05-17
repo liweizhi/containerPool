@@ -1,0 +1,41 @@
+<div class="ui fixed inverted main menu">
+<div class="container">
+    <a ui-sref="dashboard.containers" class="title item" >
+        ContainerPool
+    </a>
+    <a ui-sref="dashboard.containers" ui-sref-active="active" class="title item">
+        <i></i> Containers
+    </a>
+    <a ui-sref="dashboard.images" ui-sref-active="active" class="title item">
+        <i></i> Images
+    </a>
+
+    <a ui-sref="dashboard.accounts" ui-sref-active="active" class="title item">
+        <i></i> Accounts
+    </a>
+
+    <div class="ui right inverted menu">
+        <div class="ui item">
+            <div class="ui dropdown">
+                {{ username }} <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div ui-sref="logout" class="item"><i></i>Logout</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<div class="pusher">
+    <div class="ui active inverted dimmer" ng-show="isLoadingView">
+        <div class="ui loader"></div>
+    </div>
+    <div id="content" ui-view>
+    </div>
+</div>
+
+<script>
+$('.ui.dropdown').dropdown();
+</script>

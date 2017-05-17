@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html id="data-ng-app" data-ng-app="demo">
+<head>
+    <meta charset="utf-8">
+    <title>ui router demo</title>
+    <style type="text/css">
+        .selected{background-color: #efefef; width:120px; }
+        .detail{width: 300px;margin: 30px;border-top: 1px solid #efefef;}
+    </style>
+
+</head>
+<body id="index">
+
+<!-- Angular UI Router Directive for template insertion -->
+<div id="content" ui-view></div>
+
+<script src="./bower_components/angular/angular.min.js"></script>
+<script src = "./bower_components/underscore/underscore-min.js"></script>
+<script src="./bower_components/ui-router/release/angular-ui-router.min.js"></script>
+<script src="./main.js"></script>
+</body>
+</html>

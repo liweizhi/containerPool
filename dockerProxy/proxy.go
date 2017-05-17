@@ -66,20 +66,16 @@ func main() {
 			return
 		}
 
-		//log.Infoln("ddd")
 		errc := make(chan error, 2)
 		cp := func(dst io.Writer, src io.Reader) {
-			log.Infoln("jiru")
 			_, err = io.Copy(dst, src)
 			if err != nil{
 				log.Printf("%v", err)
 			}
 			errc <- err
-			//log.Info("chuqu")
 
 		}
 
-		//log.Info("kaishi")
 		go cp(nc, c)
 		go cp(c, nc)
 

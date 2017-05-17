@@ -12,6 +12,7 @@ import(
 	"github.com/urfave/negroni"
 	"github.com/vulcand/oxy/forward"
 	"github.com/liweizhi/containerPool/controller/middleware"
+	"io"
 )
 
 type API struct{
@@ -35,6 +36,9 @@ func NewAPI(listenAddr string, manager manager.Manager, cors bool, dockerUrl str
 
 	}
 }
+func hello(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "hello world")
+}
 func(a *API) Start(){
 	mainMux := http.NewServeMux()
 
@@ -53,8 +57,8 @@ func(a *API) Start(){
 	apiRouter.HandleFunc("/api/accounts/{username}", a.deleteAccount).Methods("DELETE")
 	apiRouter.HandleFunc("/api/roles", a.roles).Methods("GET")
 	apiRouter.HandleFunc("/api/roles/{name}", a.role).Methods("GET")
-
-
+	mainMux.Handle("/", http.FileServer(http.Dir("myStatic")))
+	//mainMux.HandleFunc("/", hello)
 	authRequired := middleware.NewAuthRequired(a.manager)
 	accessRequired := middleware.NewAccessRequired(a.manager)
 
@@ -70,7 +74,7 @@ func(a *API) Start(){
 	accountMiddlewareStack := negroni.New()
 	accountMiddlewareStack.Use(negroni.HandlerFunc(authRequired.HandlerFuncWithNext))
 	accountMiddlewareStack.UseHandler(accountRouter)
-	mainMux.Handle("/account/", accountRouter)
+	mainMux.Handle("/account/", accountMiddlewareStack)
 
 
 	loginRouter := mux.NewRouter()
@@ -122,7 +126,7 @@ func(a *API) Start(){
 
 		},
 
-		"DLETE": {
+		"DELETE": {
 			"/containers/{id}":			a.dockerHandler,
 			"/images/{name}":			a.dockerHandler,
 			"/nodes/{id}":				a.dockerHandler,

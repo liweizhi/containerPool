@@ -83,7 +83,7 @@ type Manager interface {
 
 	Roles()  []*auth.ACL
 	Role(name string)  *auth.ACL
-
+	//NodeInfo()
 
 }
 
@@ -206,6 +206,7 @@ func (m DefaultManager) SaveAccount(account *auth.Account) error {
 }
 
 func (m DefaultManager) DeleteAccount(account *auth.Account) error {
+	log.Infoln("delete account", account.ID)
 	res, err := r.Table(tblNameAccounts).Filter(map[string]string{"id": account.ID}).Delete().Run(m.session)
 	if err != nil {
 		return err

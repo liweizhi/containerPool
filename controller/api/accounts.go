@@ -62,9 +62,10 @@ func (a *API) account(w http.ResponseWriter, r *http.Request) {
 }
 func (a *API) deleteAccount(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	username := vars["username"]
+	//username := vars["username"]
+	id := vars["id"]
 
-	account, err := a.manager.Account(username)
+	account, err := a.manager.Account(id)
 	if err != nil {
 		log.Errorf("error deleting account: %s", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
