@@ -66,7 +66,7 @@ func(a *API) Start(){
 	middlewareStack.Use(negroni.HandlerFunc(authRequired.HandlerFuncWithNext))
 	middlewareStack.Use(negroni.HandlerFunc(accessRequired.HandlerFuncWithNext))
 	middlewareStack.UseHandler(apiRouter)
-	mainMux.Handle("/api/", apiRouter)
+	mainMux.Handle("/api/", middlewareStack)
 
 
 	accountRouter := mux.NewRouter()

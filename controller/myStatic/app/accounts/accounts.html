@@ -20,18 +20,18 @@
 <div class="ui padded grid">
     <div class="two column row">
         <div class="left floated column">
-            <div ng-click="vm.refresh()" class="ui small blue labeled icon button">
+            <div ng-click="vm.refresh()" class="ui small green labeled icon button">
                 <i class="refresh icon"></i> Refresh
             </div>
-            <div ui-sref="dashboard.addAccount" class="ui small green labeled icon button">
-                <i class="plus icon"></i> Add Account 
+            <div ui-sref="dashboard.addAccount" class="ui small blue labeled icon button">
+                <i class="add user icon"></i> Add Account
             </div>
         </div>
-        <div class="right aligned right floated column">
-            <div class="ui small icon input">
-                <input ng-model="tableFilter" placeholder="Search accounts..." reset-field/>
-            </div>
-        </div>
+        <!--<div class="right aligned right floated column">-->
+            <!--<div class="ui small icon input">-->
+                <!--<input ng-model="tableFilter" placeholder="Search accounts..." reset-field/>-->
+            <!--</div>-->
+        <!--</div>-->
     </div>
 
     <div class="row" ng-show="vm.accounts.length === 0">
@@ -53,10 +53,8 @@
             <table class="ui sortable celled table" ng-show="vm.accounts">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Username</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
+                        <th>ID</th>
                         <th>Roles</th>
 
                         <th></th>
@@ -64,16 +62,15 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="a in filteredAccounts = (vm.accounts | filter:tableFilter)">
-                        <td>{{a.id}}</td>
                         <td>{{a.username}}</td>
-                        <td>{{a.first_name}}</td>
-                        <td>{{a.last_name}}</td>
+                        <td>{{a.id}}</td>
+
 
                         <td><div ng-repeat="r in a.roles" class="ui horizontal label">{{r|roleDisplay}}</div></td>
 
                         <td class="collapsing">
-                            <div ui-sref="dashboard.editAccount({username: a.username})" class="compact ui icon button">
-                                <i class="search icon"></i>
+                            <div ui-sref="dashboard.editAccount({username: a.username})" class="compact ui blue icon button">
+                                <i class="edit icon"></i>
                             </div>
                             <div ng-click="vm.showRemoveAccountDialog(a)" class="compact ui icon button red">
                                 <i class="trash icon"></i>

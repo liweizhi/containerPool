@@ -232,7 +232,12 @@
                         <td class="collapsing">
                             <div  ui-sref="dashboard.inspect({id: c.Id})">
                                 <button class="basic compact ui icon button">
-                                    <i class="ui circle icon" ng-class="vm.containerStatusText(c) == 'Running' ? 'green' : vm.containerStatusText(c) == 'Paused' ? 'yellow' : 'red'"></i>
+                                    <i ng-show="vm.containerStatusText(c) == 'Running'" class="ui green dashboard icon"></i>
+                                    <i ng-show="vm.containerStatusText(c) == 'Stopped'" class="ui grey dashboard icon"></i>
+                                    <i ng-show="vm.containerStatusText(c) == 'Paused'" class="ui grey dashboard icon"></i>
+                                    <i ng-show="vm.containerStatusText(c) == 'Unknown'" class="ui grey dashboard icon"></i>
+
+                                    <!--<i class="ui circle icon" ng-class="vm.containerStatusText(c) == 'Running' ? 'green' : vm.containerStatusText(c) == 'Paused' ? 'yellow' : 'red'"></i>-->
                                 </button>
                                 <span class="hidden">{{vm.containerStatusText(c)}}</span>
                             </div>

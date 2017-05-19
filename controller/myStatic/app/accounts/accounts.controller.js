@@ -22,7 +22,8 @@
             function refresh() {
                 AccountsService.list()
                     .then(function(data) {
-                        vm.accounts = data; 
+                        vm.accounts = data;
+
                     }, function(data) {
                         vm.error = data;
                     });
@@ -30,7 +31,7 @@
             }
 
             function removeAccount() {
-                console.log("delete account:" , vm.selectedAccount.id)
+                console.log("delete account:" , vm.selectedAccount.username)
                 AccountsService.removeAccount(vm.selectedAccount)
                     .then(function(data) {
                         vm.refresh();
