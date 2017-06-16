@@ -1,17 +1,22 @@
 package manager
 
-
 import (
-
 	"github.com/liweizhi/containerPool/auth"
+	"github.com/liweizhi/containerPool/node"
 	"github.com/samalba/dockerclient"
 	"github.com/gorilla/sessions"
-	r"gopkg.in/dancannon/gorethink.v2"
+	r "gopkg.in/dancannon/gorethink.v2"
 	"errors"
-
+	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/mem"
+	"fmt"
+	"net"
+	//"github.com/shirou/gopsutil/net"
+	//"github.com/shirou/gopsutil/docker"
 	log"github.com/Sirupsen/logrus"
 
-	"fmt"
+
 	"github.com/gorilla/securecookie"
 )
 const (
@@ -83,7 +88,7 @@ type Manager interface {
 
 	Roles()  []*auth.ACL
 	Role(name string)  *auth.ACL
-	//NodeInfo()
+	NodeInfo() (*node.Info, error)
 
 }
 
@@ -414,4 +419,62 @@ func (m DefaultManager) Role(name string) *auth.ACL{
 	}
 
 	return nil
+}
+
+func (m DefaultManager) NodeInfo() (*node.Info, error){
+
+	cpupInfos, err := cpu.Info()
+	if err != nil{
+		return nil, err
+	}
+	//for i := 0; i < len(cpupInfos); i++{
+	//	fmt.Println(cpupInfos[i].CPU)
+	//	fmt.Println(cpupInfos[i].Cores)
+	//}
+
+	memInfo, err := mem.VirtualMemory()
+	if err != nil{
+		return nil, err
+	}
+	//fmt.Println(memInfo.Total)
+
+	hostInfo, err := host.Info()
+	if err != nil{
+		return nil, err
+	}
+	//fmt.Println(hostInfo)
+
+
+	addrs, err := net.InterfaceAddrs()
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var ips []string = make([]string, 0)
+
+	for _, address := range addrs {
+
+		// 检查ip地址判断是否回环地址
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil  {
+				//fmt.Println(ipnet.IP.String())
+				ips = append(ips, ipnet.IP.String())
+			}
+
+		}
+	}
+
+	nodeInfo := &node.Info{
+		HostName:	hostInfo.Hostname,
+		CPU:		cpupInfos[0].ModelName,
+		Memory:		fmt.Sprintf("%.1f",float32(memInfo.Total)/(1024 * 1024 * 1024)) + " G",
+		OS:		hostInfo.Platform + " " + hostInfo.PlatformVersion,
+		IP:		ips,
+	}
+
+	return nodeInfo, nil
+
+
 }

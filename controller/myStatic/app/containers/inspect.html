@@ -83,7 +83,7 @@
                         <div class="column">
                             <h3 class="ui header">
                                 <div class="content">
-                                    <i class="ui circle icon" ng-class="{'yellow': (vm.container.State.Running && vm.container.State.Paused), 'green': (vm.container.State.Running && !vm.container.State.Paused), 'red': !vm.container.State.Running}"></i>
+                                    <i class="ui circle icon" ng-class="{'yellow': (vm.container.State.Running && vm.container.State.Paused), 'green': (vm.container.State.Running && !vm.container.State.Paused), 'grey': !vm.container.State.Running}"></i>
                                     {{ vm.container.Name.split("/")[1] }}
                                 </div>
                             </h3>
@@ -176,7 +176,41 @@
                         </div>
                     </div>
 
+                    <div class="row", ng-show="vm.container.State.Running">
+                        <div class="column">
+                            <h4 class="ui dividing header">Host Info</h4>
+                            <table class="ui celled table">
 
+                                <tbody>
+                                <tr>
+                                    <td class="ui tiny header">HostName</td>
+                                    <td>{{ vm.nodeInfo.host_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ui tiny header">OS</td>
+                                    <td>{{ vm.nodeInfo.os}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ui tiny header">CPU</td>
+                                    <td>{{ vm.nodeInfo.cpu }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ui tiny header">Memory</td>
+                                    <td>{{ vm.nodeInfo.memory }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ui tiny header">IP</td>
+                                    <td>
+                                        <div class="item" ng-repeat="e in vm.nodeInfo.ip">
+                                            {{ e }}
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </div>
+                    </div>
                     <div class="row" ng-show="vm.links.length>0">
                         <div class="column">
                             <h4 class="ui dividing header">Container Links</h4>
@@ -228,7 +262,7 @@
                                         <td ng-repeat="c in r">
                                             {{ c }}
                                             <script>
-$('.ui.sortable.celled.table').tablesort();
+                                                $('.ui.sortable.celled.table').tablesort();
                                             </script>
                                         </td>
                                     </tr>

@@ -3,11 +3,13 @@ package node
 
 
 type(
-	info struct {
-		hostname	string	`json:"host_name,omitempty"`
-		os		string `json:"os,omitempty"`
-		ip		string `json:"ip,omitempty"`
-		memory		string `json:"memory,omitempty"`
-		cpu		string `json:"cpu,omitempty"`
+	Info struct {
+		HostName	string	`json:"host_name,omitempty"`
+		CPU		string `json:"cpu,omitempty"`
+		Memory		string `json:"memory,omitempty"`
+		OS		string `json:"os,omitempty"`
+		IP		[]string `json:"ip,omitempty"`
+
+
 	}
 )

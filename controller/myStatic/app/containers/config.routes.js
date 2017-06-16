@@ -27,7 +27,9 @@
                     return ContainerService.inspect($stateParams.id).then(null, function(errorData) {
                         $state.go('error');
                     });
-                }]
+                }],
+
+
             }
         })
         .state('dashboard.deploy', {

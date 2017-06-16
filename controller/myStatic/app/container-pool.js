@@ -11,6 +11,7 @@
 
                     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
                         $rootScope.username = AuthService.getUsername();
+                       // console.log("stateChangeStart")
                     });
 
                     $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {

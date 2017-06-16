@@ -7,16 +7,18 @@
         .selected{background-color: #efefef; width:120px; }
         .detail{width: 300px;margin: 30px;border-top: 1px solid #efefef;}
     </style>
-
+    <script src="./bower_components/angular/angular.min.js"></script>
+    <script src = "./bower_components/underscore/underscore-min.js"></script>
+    <script src="./bower_components/ui-router/release/angular-ui-router.min.js"></script>
+    <script src="./main.js"></script>
 </head>
 <body id="index">
 
 <!-- Angular UI Router Directive for template insertion -->
-<div id="content" ui-view></div>
+<div id="content" ui-view>
 
-<script src="./bower_components/angular/angular.min.js"></script>
-<script src = "./bower_components/underscore/underscore-min.js"></script>
-<script src="./bower_components/ui-router/release/angular-ui-router.min.js"></script>
-<script src="./main.js"></script>
+</div>
+
+
 </body>
 </html>

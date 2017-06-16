@@ -118,6 +118,14 @@
                     });
                 return promise;
             },
+            node: function () {
+                var promise = $http
+                    .get('/api/node')
+                    .then(function (response) {
+                        return response.data;
+                    })
+                return promise;
+            }
         } 
     }
 

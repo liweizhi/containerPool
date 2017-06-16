@@ -3,6 +3,7 @@
 
     angular
         .module('container-pool', [
+                'container-pool.toplogy',
                 'container-pool.accounts',
                 'container-pool.core',
                 'container-pool.services',

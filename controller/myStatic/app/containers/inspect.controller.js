@@ -23,8 +23,12 @@
         vm.top;
         vm.stats;
         vm.links = parseContainerLinks(vm.container.HostConfig.Links);
+        vm.nodeInfo = {};
 
+
+        getNodeInfo();
         if(resolvedContainer.State.Running) {
+
             ContainerService.top(resolvedContainer.Id).then(function(data) {
                 vm.top = data
             }, null);
@@ -126,6 +130,16 @@
                 }, function(data) {
                     vm.error = data;
                 });
+        }
+
+        function getNodeInfo() {
+            ContainerService.node()
+                .then(function (data) {
+                    vm.nodeInfo = data;
+                }, function (data) {
+                    vm.error = data;
+                })
+
         }
 	}
 })();

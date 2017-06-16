@@ -57,6 +57,7 @@ func(a *API) Start(){
 	apiRouter.HandleFunc("/api/accounts/{username}", a.deleteAccount).Methods("DELETE")
 	apiRouter.HandleFunc("/api/roles", a.roles).Methods("GET")
 	apiRouter.HandleFunc("/api/roles/{name}", a.role).Methods("GET")
+	apiRouter.HandleFunc("/api/node", a.nodeInfo).Methods("GET")
 	mainMux.Handle("/", http.FileServer(http.Dir("myStatic")))
 	//mainMux.HandleFunc("/", hello)
 	authRequired := middleware.NewAuthRequired(a.manager)

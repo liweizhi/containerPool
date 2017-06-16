@@ -6,6 +6,7 @@
 		.controller('LogsController', LogsController);
 
 	LogsController.$inject = ['resolvedLogs', '$stateParams'];
+
 	function LogsController(resolvedLogs, $stateParams) {
         var vm = this;
         vm.id = $stateParams.id;

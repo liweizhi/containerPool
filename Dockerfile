@@ -1,4 +1,4 @@
-FROM scratch
+FROM busybox
 
 ENV TAG latest
 ENV PATH $PATH:/go/bin:/usr/local/go/bin
