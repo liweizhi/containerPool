@@ -11,6 +11,7 @@
                 'container-pool.login',
                 'container-pool.containers',
                 'container-pool.images',
+                'container-pool.nodes',
                 'container-pool.filters',
                 'angular-jwt',
                 'base64',
