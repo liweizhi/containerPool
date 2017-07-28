@@ -125,6 +125,14 @@
                         return response.data;
                     })
                 return promise;
+            },
+            swarminfo:function () {
+                var promise = $http
+                    .get('/info')
+                    .then(function (response) {
+                        return response.data;
+                    })
+                return promise;
             }
         } 
     }

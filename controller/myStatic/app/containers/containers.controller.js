@@ -20,6 +20,7 @@
         vm.selectedContainerId = "";
         vm.newName = "";
         vm.repoName = "";
+        vm.swarm = "";
 
         vm.showDestroyContainerDialog = showDestroyContainerDialog;
         vm.showRestartContainerDialog = showRestartContainerDialog;
@@ -149,7 +150,12 @@
                 }, function(data) {
                     vm.error = data;
                 });
-
+            ContainerService.swarminfo()
+                .then(function(data) {
+                   vm.swarm = data;
+                }, function(data) {
+                    vm.error = data;
+                });
             vm.error = "";
             vm.errors = [];
             vm.containers = [];

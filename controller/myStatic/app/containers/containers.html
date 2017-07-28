@@ -217,6 +217,7 @@
                         <th class="collapsing">Id</th>
                         <th>Name</th>
                         <th>Image</th>
+                        <th>Node</th>
                         <th>Created</th>
                         <th>Actions</th>
                     </tr>
@@ -245,6 +246,7 @@
                         <td>{{c.Id | limitTo:12 }}</td>
                         <td>{{vm.containerName(c)}}</td> 
                         <td>{{c.Image}}</td>
+                        <td>{{vm.swarm.Name}}</td>
                         <td>{{c.Created * 1000 | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
                         <td class="collapsing">
 
